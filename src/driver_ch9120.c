@@ -118,12 +118,20 @@ static uint8_t a_ch9120_write_check(ch9120_handle_t *handle,
     handle->buf[0] = 0x57;                                    /* set header 0 */
     handle->buf[1] = 0xAB;                                    /* set header 1 */
     memcpy(&handle->buf[2], param, len);                      /* copy param */
-    handle->cfg_gpio_write(0);                                /* set low */
-    handle->uart_flush();                                     /* uart flush */
+    res = handle->cfg_gpio_write(0);                          /* set low */
+    if (res != 0)                                             /* check result */
+    {
+        return 1;                                             /* return error */
+    }
+    res = handle->uart_flush();                               /* uart flush */
+    if (res != 0)                                             /* check result */
+    {
+        return 1;                                             /* return error */
+    }
     if (handle->uart_write(handle->buf, 2 + len) != 0)        /* write command */
     {
         handle->debug_print("ch9120: write failed.\n");       /* write failed */
-        handle->cfg_gpio_write(1);                            /* set high */
+        (void)handle->cfg_gpio_write(1);                      /* set high */
         
         return 1;                                             /* return error */
     }
@@ -139,14 +147,18 @@ static uint8_t a_ch9120_write_check(ch9120_handle_t *handle,
         {
             if (res == 0xAA)                                  /* check 0xAA */
             {
-                handle->cfg_gpio_write(1);                    /* set high */
+                res = handle->cfg_gpio_write(1);              /* set high */
+                if (res != 0)                                 /* check result */
+                {
+                    return 1;                                 /* return error */
+                }
                 
                 return 0;                                     /* success return 0 */
             }
             else
             {
                 handle->debug_print("ch9120: error.\n");      /* error */
-                handle->cfg_gpio_write(1);                    /* set high */
+                (void)handle->cfg_gpio_write(1);              /* set high */
                 
                 return 3;                                     /* return error */
             }
@@ -156,7 +168,7 @@ static uint8_t a_ch9120_write_check(ch9120_handle_t *handle,
     }
     
     handle->debug_print("ch9120: timeout.\n");                /* timeout */
-    handle->cfg_gpio_write(1);                                /* set high */
+    (void)handle->cfg_gpio_write(1);                          /* set high */
     
     return 4;                                                 /* return error */
 }
@@ -182,6 +194,7 @@ static uint8_t a_ch9120_write_read(ch9120_handle_t *handle,
                                    uint8_t *out, uint16_t out_len,
                                    uint16_t pre_delay, uint16_t timeout)
 {
+    uint8_t res;
     uint16_t t;
     uint16_t point;
     
@@ -195,12 +208,20 @@ static uint8_t a_ch9120_write_read(ch9120_handle_t *handle,
     handle->buf[0] = 0x57;                                    /* set header 0 */
     handle->buf[1] = 0xAB;                                    /* set header 1 */
     memcpy(&handle->buf[2], param, len);                      /* copy param */
-    handle->cfg_gpio_write(0);                                /* set low */
-    handle->uart_flush();                                     /* uart flush */
+    res = handle->cfg_gpio_write(0);                          /* set low */
+    if (res != 0)                                             /* check result */
+    {
+        return 1;                                             /* return error */
+    }
+    res = handle->uart_flush();                               /* uart flush */
+    if (res != 0)                                             /* check result */
+    {
+        return 1;                                             /* return error */
+    }
     if (handle->uart_write(handle->buf, 2 + len) != 0)        /* write command */
     {
         handle->debug_print("ch9120: write failed.\n");       /* write failed */
-        handle->cfg_gpio_write(1);                            /* set high */
+        (void)handle->cfg_gpio_write(1);                      /* set high */
         
         return 1;                                             /* return error */
     }
@@ -221,7 +242,11 @@ static uint8_t a_ch9120_write_read(ch9120_handle_t *handle,
             point += l;                                       /* point += l*/
             if (point >= out_len)                             /* check length */
             {
-                handle->cfg_gpio_write(1);                    /* set high */
+                res = handle->cfg_gpio_write(1);              /* set high */
+                if (res != 0)                                 /* check result */
+                {
+                    return 1;                                 /* return error */
+                }
                 
                 return 0;                                     /* success return 0 */
             }
@@ -231,7 +256,7 @@ static uint8_t a_ch9120_write_read(ch9120_handle_t *handle,
     }
     
     handle->debug_print("ch9120: timeout.\n");                /* timeout */
-    handle->cfg_gpio_write(1);                                /* set high */
+    (void)handle->cfg_gpio_write(1);                          /* set high */
     
     return 3;                                                 /* return error */
 }

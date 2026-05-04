@@ -456,8 +456,8 @@ uint8_t ch9120(uint8_t argc, char **argv)
         /* print pin connection */
         ch9120_interface_debug_print("ch9120: TX connected to GPIO15(BCM).\n");
         ch9120_interface_debug_print("ch9120: RX connected to GPIO14(BCM).\n");
-        ch9120_interface_debug_print("ch9120: RESET connected to GPIO27(BCM).\n");
-        ch9120_interface_debug_print("ch9120: CFG_EN connected to GPIO17(BCM).\n");
+        ch9120_interface_debug_print("ch9120: RSTI connected to GPIO27(BCM).\n");
+        ch9120_interface_debug_print("ch9120: CFG connected to GPIO17(BCM).\n");
         
         return 0;
     }
